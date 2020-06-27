@@ -1,0 +1,36 @@
+main {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    height: 700px;
+}
+
+#operation {
+    display: inline-block;
+}
+
+#img {
+    width: 500px;
+    margin-bottom: 20px;
+}
+
+button {
+    width: 120px;
+    height: 30px;
+    border-radius: 5px;
+    background-color: white;
+    border-width: 1px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+    margin: 0 20px;
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+button:active {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+}

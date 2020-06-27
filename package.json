@@ -1,0 +1,7 @@
+{
+  "name": "bing-image-web",
+  "version": "1.0.0",
+  "scripts": {
+    "server": "http-server -c-1 -p 8800"
+  }
+}
