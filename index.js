@@ -51,7 +51,8 @@ const getData = async (type) => {
         const image = await getImage(`${domain}${data.url}`);
         if (url) URL.revokeObjectURL(url);
         url = URL.createObjectURL(image);
-        name = data.name;
+        const fileType = image.type.replace(/^.*\//, '');
+        name = data.name.replace(/\.[^.]*$/, `.${fileType}`);
     } catch (e) {
         console.error(e);
     }
