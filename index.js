@@ -9,7 +9,7 @@ const api = {
 const box = document.getElementsByTagName('main')[0];
 const operation = document.getElementById('operation');
 const btns = Array.prototype.slice.call(operation.querySelectorAll('button')).filter(btn => btn.dataset.tag !== 'download');
-let image, name, downloadLink;
+let image, name, downloadLink, url;
 
 const getInfo = async (type) => {
     let apiDomain = api[type];
@@ -31,50 +31,44 @@ const getImage = async (url) => {
     return image;
 };
 
-const showImage = (blob) => {
+const showImage = () => {
+    if (!url) return;
     let img = document.getElementById('img');
     if (!img) {
         img = document.createElement('img');
         img.id = 'img';
         box.insertBefore(img, operation);
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-        img.src = reader.result;
-    };
-    reader.readAsDataURL(blob);
+    img.src = url;
 };
 
 const getData = async (type) => {
-    // if (image && name) return;
     btns.forEach(btn => {
         btn.disabled = true;
     });
-    const data = await getInfo(type);
-    image = await getImage(`${domain}${data.url}`);
-    name = data.name;
+    try {
+        const data = await getInfo(type);
+        image = await getImage(`${domain}${data.url}`);
+        if (url) URL.revokeObjectURL(url);
+        url = URL.createObjectURL(image);
+        name = data.name;
+    } catch (e) {
+        console.error(e);
+    }
     btns.forEach(btn => {
         btn.disabled = false;
     });
-    showImage(image);
+    showImage();
 };
 
 const download = () => {
-    const url = URL.createObjectURL(image);
     if (!url) return;
     if (!downloadLink) {
         downloadLink = document.createElement('a');
-    } else {
-        URL.revokeObjectURL(downloadLink.href);
     }
     downloadLink.href = url;
     downloadLink.download = name;
     downloadLink.click();
-    // URL.revokeObjectURL(link.href);
-    // link.click();
-    // setTimeout(() => {
-    //
-    // })
 };
 
 operation.addEventListener('click', (evt) => {
