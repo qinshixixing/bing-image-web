@@ -1,14 +1,19 @@
 const domain = 'https://www.bing.com';
-const apiDomain = 'https://qinshixixing-bing-image.herokuapp.com';
+
+const api = {
+    main: 'https://1385629885875963.cn-hangzhou.fc.aliyuncs.com/2016-08-15/proxy/qinshixixing/bing-image/',
+    HK: 'https://1385629885875963.cn-hongkong.fc.aliyuncs.com/2016-08-15/proxy/qinshixixing/bing-image/',
+    US: 'https://qinshixixing-bing-image.herokuapp.com'
+};
 
 const box = document.getElementsByTagName('main')[0];
 const operation = document.getElementById('operation');
-const getImageBtn = operation.querySelector('button:first-child');
-const downloadBtn = operation.querySelector('button:last-child');
-
+const btns = Array.prototype.slice.call(operation.querySelectorAll('button')).filter(btn => btn.dataset.tag !== 'download');
 let image, name;
 
-const getInfo = async () => {
+const getInfo = async (type) => {
+    let apiDomain = api[type];
+    if (!apiDomain) apiDomain = api.main;
     const res = await fetch(apiDomain, {
         mode: 'cors'
     });
@@ -51,12 +56,16 @@ const setDownload = (name, blob) => {
     link.remove();
 };
 
-const getData = async () => {
+const getData = async (type) => {
     // if (image && name) return;
-    getImageBtn.disabled = true;
-    const data = await getInfo();
+    btns.forEach(btn => {
+        btn.disabled = true;
+    });
+    const data = await getInfo(type);
     image = await getImage(data.url);
-    getImageBtn.disabled = false;
+    btns.forEach(btn => {
+        btn.disabled = false;
+    });
     name = data.name;
     showImage(image);
 };
@@ -71,5 +80,10 @@ const download = () => {
     link.remove();
 };
 
-getImageBtn.addEventListener('click', getData);
-downloadBtn.addEventListener('click', download);
+operation.addEventListener('click', (evt) => {
+    const target = evt.target;
+    if (target.tagName.toLowerCase() !== 'button') return;
+    const type = target.dataset.tag;
+    if (type === 'download') download();
+    else getData(type);
+});
