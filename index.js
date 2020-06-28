@@ -9,7 +9,7 @@ const api = {
 const box = document.getElementsByTagName('main')[0];
 const operation = document.getElementById('operation');
 const btns = Array.prototype.slice.call(operation.querySelectorAll('button')).filter(btn => btn.dataset.tag !== 'download');
-let image, name;
+let image, name, downloadLink;
 
 const getInfo = async (type) => {
     let apiDomain = api[type];
@@ -23,7 +23,6 @@ const getInfo = async (type) => {
 };
 
 const getImage = async (url) => {
-    url = `${domain}${url}`;
     const res = await fetch(url, {
         mode: 'cors'
     });
@@ -46,38 +45,36 @@ const showImage = (blob) => {
     reader.readAsDataURL(blob);
 };
 
-const setDownload = (name, blob) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    link.remove();
-};
-
 const getData = async (type) => {
     // if (image && name) return;
     btns.forEach(btn => {
         btn.disabled = true;
     });
     const data = await getInfo(type);
-    image = await getImage(data.url);
+    image = await getImage(`${domain}${data.url}`);
+    name = data.name;
     btns.forEach(btn => {
         btn.disabled = false;
     });
-    name = data.name;
     showImage(image);
 };
 
 const download = () => {
     const url = URL.createObjectURL(image);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    link.remove();
+    if (!url) return;
+    if (!downloadLink) {
+        downloadLink = document.createElement('a');
+    } else {
+        URL.revokeObjectURL(downloadLink.href);
+    }
+    downloadLink.href = url;
+    downloadLink.download = name;
+    downloadLink.click();
+    // URL.revokeObjectURL(link.href);
+    // link.click();
+    // setTimeout(() => {
+    //
+    // })
 };
 
 operation.addEventListener('click', (evt) => {
