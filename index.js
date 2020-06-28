@@ -9,7 +9,7 @@ const api = {
 const box = document.getElementsByTagName('main')[0];
 const operation = document.getElementById('operation');
 const btns = Array.prototype.slice.call(operation.querySelectorAll('button')).filter(btn => btn.dataset.tag !== 'download');
-let image, name, downloadLink, url;
+let name, downloadLink, url;
 
 const getInfo = async (type) => {
     let apiDomain = api[type];
@@ -48,7 +48,7 @@ const getData = async (type) => {
     });
     try {
         const data = await getInfo(type);
-        image = await getImage(`${domain}${data.url}`);
+        const image = await getImage(`${domain}${data.url}`);
         if (url) URL.revokeObjectURL(url);
         url = URL.createObjectURL(image);
         name = data.name;
